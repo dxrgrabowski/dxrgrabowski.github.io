@@ -1,0 +1,85 @@
+# The primary author of this blog.
+# Must be the same as `author` in `_config.yml`.
+# Change `author1` to your shortname.
+author1:
+  name:              <Dawid> <Grabowski>
+  email:             <dxrsoftware@gmail.com>
+
+  # Used at the bottom of each page and at the top of the `about` layout
+  # Markdown enabled, can use multiple paragraphs (enabled by `|`)
+  about:             |
+    I'm Dawid, a Linux C/C++ software engineer 👨‍💻 starting my proffesional career in 2021.
+    My career started with C family languages, then I had a few months of Python. 
+    Then a short intensive period with UI/UX web technologies. 
+    I decided to focus on developing myself towards C languages, Linux and low-level topics.
+    First working on a project in procedural C for embedded solutions (DSP CPUs). 
+    Then in Full-stack development in C++ from backend solutions using Qt, 
+    boost and asynchronous event handling. 
+    And creating frontend interfaces in QtQuick using QML.
+
+  # This photo will be used in the about section
+  picture:
+    path:            https://media.licdn.com/dms/image/D5603AQGHTYG-YZCi6Q/profile-displayphoto-shrink_200_200/0/1681463799184?e=1727913600&v=beta&t=XdIxYlwQ62IpgOIWGnFlnsGkl9jpCkKMhA53AapiXg4
+    # srcset is optional, but can be used to provide higher res versions for retina displays
+    srcset:
+      1x:            https://media.licdn.com/dms/image/D5603AQGHTYG-YZCi6Q/profile-displayphoto-shrink_200_200/0/1681463799184?e=1727913600&v=beta&t=XdIxYlwQ62IpgOIWGnFlnsGkl9jpCkKMhA53AapiXg4
+      2x:            https://media.licdn.com/dms/image/D5603AQGHTYG-YZCi6Q/profile-displayphoto-shrink_200_200/0/1681463799184?e=1727913600&v=beta&t=XdIxYlwQ62IpgOIWGnFlnsGkl9jpCkKMhA53AapiXg4
+
+  # Social media icons in sidebar
+  # Comment/uncommet to show/hide
+  # Rearrange to change the order in which they appear
+  social:
+    #twitter:         <username>
+    github:          dxrgrabowski
+    email:           dxrsoftware@gmail.com
+    # rss:             https://<url>/feed.xml
+    # facebook:        <username>
+    # google:          <number>
+    # vk:              <username>
+    # youtube:         <string_string_string>
+    # vimeo:           <username>
+    # vine:            <username>
+    # spotify:         <user>/<number>
+    # soundcloud:      <username>
+    # lastfm:          <username>
+    # instagram:       <username>
+    # flickr:          <string@string>
+    # 500px:           <username>
+    # dribbble:        <username>
+    # behance:         <username>
+    # deviantart:      <username>
+    # ello:            <username>
+    # twitch:          <username>
+    # steam:           <number>
+    # reddit:          <username>
+    # tumblr:          <username>
+    # pinterest:       <username>
+    # foursquare:      <number>
+    # yelp:            <string>
+    # stackoverflow:   <number/username>
+    # npm:             <username>
+    # hackernews:      <username>
+    # trello:          <firstnamelastname>
+    linkedin:        dawidgraabowski
+    # xing:            <firstname_lastname_counter>
+    # blogger:         <number>
+    # delicious:       <username>
+    # stumbleupon:     <username>
+    # paypal:          <username>
+    # download:        <url>
+    # keybase          <username>
+
+# Another author (optional)
+author2:
+  name:              <firtname> <lastname>
+  email:             <mail@domain.tld>
+  about:             |
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+    Open `_data/authors.yml` to edit this text.
+
+  picture:           https://placehold.it/128x128
+  twitter:           <username>
+  github:            <username>
