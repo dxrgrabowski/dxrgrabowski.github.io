@@ -19,7 +19,7 @@
 		"astro": "4.12.1",
 		"astro-expressive-code": "^0.35.3",
 		"astro-icon": "^1.1.0",
-		"cssnano": "^7.0.4",
+		"cssnano": "^7.0.5",
 		"rehype-external-links": "^3.0.0",
 		"satori": "0.10.14",
 		"satori-html": "^0.3.2",
