@@ -1,9 +1,8 @@
 .DS_Store
-.idea/
+Thumbs.db
+db.json
 *.log
-*.iml
-.tern-port
-yarn.lock
-package-lock.json
 node_modules/
-.vscode
+public/
+.deploy*/
+_multiconfig.yml
