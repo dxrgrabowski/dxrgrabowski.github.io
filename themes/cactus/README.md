@@ -430,6 +430,9 @@ Finally, edit the `_config.yml` and add a link to the navigation menu.
 nav:
   search: /search/
 ```
+## Acknowledgment
+
+This theme is based on [Hexo Theme Cactus](https://github.com/probberechts/hexo-theme-cactus)
 
 ## License
 
