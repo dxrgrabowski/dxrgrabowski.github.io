@@ -233,3 +233,18 @@ code
 
 #header-post #actions
   direction: ltr !important
+
+.reveal-text
+  cursor: pointer
+
+  &:hover::after
+    content: attr(data-hover)
+    color: $color-text
+
+  &::after
+    content: attr(data-placeholder)
+    color: $color-accent-3
+
+  &.active::after
+    content: attr(data-click)
+    color: $color-text

@@ -19,7 +19,11 @@ $(document).ready(function() {
     $("#header > #nav > ul").toggleClass("responsive");
   });
 
-
+  document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('reveal-text')) {
+      event.target.classList.toggle('active');
+    }
+  });
   /**
    * Controls the different versions of  the menu in blog post articles 
    * for Desktop, tablet and mobile.
