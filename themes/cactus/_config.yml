@@ -16,7 +16,8 @@ direction: ltr
 nav:
   home: /
   about: /about/
-  articles: /archives/
+  # articles: /archives/
+  category: /categories/
   projects: https://github.com/dxrgrabowski
 
 
@@ -69,7 +70,7 @@ post:
 # Customize the copyright years
 # Note: if start_year/end_year not provided, will use current year.
 copyright:
-  start_year: 2016
+  start_year: 2024
   end_year:
 
 # Customize the 404 page
@@ -95,11 +96,11 @@ error_404:
 #   - grayout: whether to enable a hover effect on the logo
 logo:
   enabled: true
-  width: 60
-  height: 60
-  url: /images/DXR_logo_no_bg_full.png
+  width: 90
+  height: 90
+  url: /images/DXR_cut_rounded.png
   gravatar: false
-  grayout: true
+  grayout: false
 
 
 # Customize the favicons.
@@ -113,13 +114,13 @@ logo:
 #   - gravatar: whether to create a favicon from your Gravatar
 favicon:
   desktop:
-    url: /images/DXR_logo_no_bg_full.png
+    url: /images/DXR_cut_rounded.png
     gravatar: false
   android:
-    url: /images/DXR_logo_no_bg_full.png
+    url: /images/DXR_cut_rounded.png
     gravatar: false
   apple:
-    url: /images/DXR_logo_no_bg_full.png
+    url: /images/DXR_cut_rounded.png
     gravatar: false
 
 # The color scheme that should be used to highlight codeblocks.
@@ -161,20 +162,20 @@ mathjax:
 # Fill in your Disqus Comments Shortname to enable Disqus comments.
 disqus:
   enabled: false
-  shortname: cactus-1
+  shortname: 
 
 # Fill in your Utterances data to enable Utterances comments
 utterances:
-  enabled: false
-  repo: owner/githubrepo
+  enabled: true
+  repo: dxrgrabowski/dxrgrabowski.github.io
   issue_term: pathname
   label: Comment
   theme: github-dark
 
 # Fill in your Google Analytics tracking ID to enable Google Analytics.
 google_analytics:
-  enabled: false
-  id: UA-86660611-1
+  enabled: true
+  id: G-M1CMTMN59L
 
 # Fill in your Baidu Analytics tracking ID to enable Baidu Analytics.
 baidu_analytics:
