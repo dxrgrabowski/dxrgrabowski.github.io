@@ -50,7 +50,7 @@ tags_overview: true
 #   - sort_updated: sort posts by last modification date instead of creation date.
 posts_overview:
   show_all_posts: false
-  post_count: 5
+  post_count: 8
   sort_updated: false
 
 # Customize the archive view.

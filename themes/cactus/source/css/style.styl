@@ -238,13 +238,21 @@ code
   cursor: pointer
 
   &:hover::after
-    content: attr(data-hover)
-    color: $color-text
+    content: attr(after)
+    color: $color-accent-2
 
   &::after
-    content: attr(data-placeholder)
+    content: attr(before)
     color: $color-accent-3
 
   &.active::after
-    content: attr(data-click)
-    color: $color-text
+    content: attr(after)
+    color: $color-accent-2
+
+.word-count
+  
+  color: $color-accent-3
+  
+.reading-time
+
+  color: $color-accent-3

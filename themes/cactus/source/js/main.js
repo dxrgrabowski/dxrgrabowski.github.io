@@ -18,7 +18,7 @@ $(document).ready(function() {
   $("#header > #nav > ul > .icon").click(function() {
     $("#header > #nav > ul").toggleClass("responsive");
   });
-
+  // Listen for click events on the document. for reveal-text class
   document.addEventListener('click', function(event) {
     if (event.target.classList.contains('reveal-text')) {
       event.target.classList.toggle('active');
@@ -113,5 +113,54 @@ $(document).ready(function() {
         }
       });
     }
+
+    //
+    updateArticleStats();
   }
 });
+
+
+/**
+ * Counts words in the given text.
+ */
+function countWords(htmlContent) {
+  // Remove script and style elements
+  var text = htmlContent.replace(/<(script|style).*?<\/\1>/gs, '');
+  
+  // Remove HTML tags
+  text = text.replace(/<[^>]*>/g, '');
+  
+  // Remove special characters and numbers
+  text = text.replace(/[^a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\s]/g, '');
+  
+  // Split by whitespace and filter out empty strings
+  var words = text.trim().split(/\s+/).filter(function(word) {
+    return word.length > 0;
+  });
+  
+  return words.length;
+}
+
+/**
+ * Updates article statistics (word count and reading time).
+ */
+function updateArticleStats() {
+  var $articleContent = $(".content");
+  if ($articleContent.length) {
+    var htmlContent = $articleContent.html();
+    var wordCount = countWords(htmlContent);
+    var readingTime = estimateReadingTime(wordCount);
+
+    $(".word-count").text("Words: " + wordCount);
+    $(".reading-time").text("Est. reading time: " + readingTime + " min");
+  }
+}
+
+/**
+ * Estimates reading time based on word count.
+ */
+  function estimateReadingTime(wordCount) {
+    var wordsPerMinute = 130;
+    return Math.ceil(wordCount / wordsPerMinute);
+}
+
