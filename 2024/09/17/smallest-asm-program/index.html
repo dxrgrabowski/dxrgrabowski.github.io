@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="PrefaceAs we saw recently when trying to create the shortest C program. The biggest cost in this program was glibc and its overhead for running the program. How is it look like in the case of asm? Tod">
+<meta property="og:type" content="article">
+<meta property="og:title" content="smallest-asm-program">
+<meta property="og:url" content="http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/index.html">
+<meta property="og:site_name" content="Dawid Grabowski&#39;s Blog">
+<meta property="og:description" content="PrefaceAs we saw recently when trying to create the shortest C program. The biggest cost in this program was glibc and its overhead for running the program. How is it look like in the case of asm? Tod">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/main_no_return.png">
+<meta property="og:image" content="https://i.sstatic.net/XiiyH.png">
+<meta property="article:published_time" content="2024-09-17T14:50:52.000Z">
+<meta property="article:modified_time" content="2024-09-24T12:43:37.024Z">
+<meta property="article:author" content="Dawid Grabowski">
+<meta property="article:tag" content="assembly">
+<meta property="article:tag" content="C">
+<meta property="article:tag" content="gcc">
+<meta property="article:tag" content="libc">
+<meta property="article:tag" content="perf">
+<meta property="article:tag" content="syscall">
+<meta property="article:tag" content="process">
+<meta property="article:tag" content="linker">
+<meta property="article:tag" content="kernel">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/main_no_return.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/DXR_cut_rounded.png">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/DXR_cut_rounded.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/DXR_cut_rounded.png">
+        
+      
+    
+    <!-- title -->
+    <title>smallest-asm-program</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M1CMTMN59L"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-M1CMTMN59L');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Category</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/dxrgrabowski">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/09/07/smallest-program/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&text=smallest-asm-program"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&title=smallest-asm-program"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&is_video=false&description=smallest-asm-program"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=smallest-asm-program&body=Check out this article: http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&title=smallest-asm-program"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&title=smallest-asm-program"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&title=smallest-asm-program"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&title=smallest-asm-program"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&name=smallest-asm-program&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&t=smallest-asm-program"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Preface"><span class="toc-number">1.</span> <span class="toc-text">Preface</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Understanding-Program-Execution-in-UNIX-like-Systems"><span class="toc-number">2.</span> <span class="toc-text">Understanding Program Execution in UNIX-like Systems</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Do-All-Programs-Need-an-Exit"><span class="toc-number">3.</span> <span class="toc-text">Do All Programs Need an Exit?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ret-or-sys-exit"><span class="toc-number">3.1.</span> <span class="toc-text">ret or sys_exit</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#glibc%E2%80%99s-Role"><span class="toc-number">4.</span> <span class="toc-text">glibc’s Role</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Glibc-glibc-libc-is-there-sth-other"><span class="toc-number">4.1.</span> <span class="toc-text">Glibc, glibc, libc is there sth other?</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Vicious-circle"><span class="toc-number">5.</span> <span class="toc-text">Vicious circle</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sth-else"><span class="toc-number">6.</span> <span class="toc-text">sth else</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        smallest-asm-program
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Dawid Grabowski</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-09-17T14:50:52.000Z" class="dt-published" itemprop="datePublished">2024-09-17</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Operating-System-Construction/">Operating System Construction</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/C/" rel="tag">C</a>, <a class="p-category" href="/tags/assembly/" rel="tag">assembly</a>, <a class="p-category" href="/tags/gcc/" rel="tag">gcc</a>, <a class="p-category" href="/tags/kernel/" rel="tag">kernel</a>, <a class="p-category" href="/tags/libc/" rel="tag">libc</a>, <a class="p-category" href="/tags/linker/" rel="tag">linker</a>, <a class="p-category" href="/tags/perf/" rel="tag">perf</a>, <a class="p-category" href="/tags/process/" rel="tag">process</a>, <a class="p-category" href="/tags/syscall/" rel="tag">syscall</a>
+    </div>
+
+
+    </div>
+    <span class="word-count"></span>
+    <span class="reading-time"></span>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h2><p>As we saw recently when trying to create the shortest C program. The biggest cost in this program was glibc and its overhead for running the program. How is it look like in the case of asm? Today we will see.</p>
+<p>I know how scary assembly is if you’ve only heard about it. But it’s not as scary as they say. I’ll present everything in a very simple way so that everyone can understand what’s going on and what’s responsible for what.</p>
+<p>To fully understand what is happening first I will tell you what is syscall.<br>By default, programs run in user mode, which is a restricted execution environment where the program cannot directly access hardware resources. In user mode, a program does not have direct access I&#x2F;O operations, network access, managing system processes or system files. To interact with it programs need to communicate with the kernel via kernel mode. A system call (syscall) is the mechanism by which a program running in user mode requests services from the kernel. e.g. <em>write()</em> used in <em>prinf()</em> to access stdout or <em>exit()</em> to exit process. More details and determining the moment at which we switch between modes later in this article.</p>
+<p>I will use <em>sys_write</em> and <em>write()</em> to differentiate between the real syscall and glibc function call.</p>
+<p>I think now is a good moment to reveal that we can compile a C file without glibc that can be done with flag <code>-nostdlib</code> the fact is, that this program will not be simmilar to C.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> _start() &#123;</span><br><span class="line">    __asm__ <span class="title function_">volatile</span> <span class="params">(</span></span><br><span class="line"><span class="params">        <span class="string">&quot;mov $60, %rax\n&quot;</span>  </span></span><br><span class="line"><span class="params">        <span class="string">&quot;mov $0, %rdi\n&quot;</span>  </span></span><br><span class="line"><span class="params">        <span class="string">&quot;syscall&quot;</span></span></span><br><span class="line"><span class="params">    )</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>And its perf:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0.06</span>   msec task-clock:u            #    <span class="number">0.284</span> CPUs utilized</span><br><span class="line"><span class="number">1</span>      page-faults:u                #    <span class="number">16.743</span> K/sec</span><br><span class="line"><span class="number">1119</span>   cycles:u                     #    <span class="number">0.018</span> GHz</span><br><span class="line"><span class="number">5</span>      stalled-cycles-frontend:u    #    <span class="number">0.45</span>% frontend cycles idle</span><br><span class="line"><span class="number">0</span>      stalled-cycles-backend:u     </span><br><span class="line"><span class="number">6</span>      instructions:u               #    <span class="number">0.01</span>  insn per cycle</span><br></pre></td></tr></table></figure>
+<p>As we can see the result is much better than the last C static linked program, thats because we don’t need glibc anymore. </p>
+<p>Now time for some assembly which will explain us what happened above:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">section .text</span><br><span class="line">    global _start <span class="comment">// Inform the linker where is program start</span></span><br><span class="line"></span><br><span class="line">_start<span class="punctuation">:</span>           <span class="comment">// Program start</span></span><br><span class="line">    mov rax<span class="punctuation">,</span> <span class="number">60</span>   <span class="comment">// syscall number for exit (60)</span></span><br><span class="line">    mov rdi<span class="punctuation">,</span> <span class="number">0</span>    <span class="comment">// set exit code 0 (rdi = 0)</span></span><br><span class="line">    syscall       <span class="comment">// invoke the system call with syscall number -</span></span><br><span class="line">                  <span class="comment">// stored in rax and exit code in rdi</span></span><br></pre></td></tr></table></figure>
+<p>This is <span class="reveal-text" before="x86-64" after="64 bit"></span> architecture, this is important because code and syscall codes on <span class="reveal-text" before="x86" after="32 bit"></span> are different :D</p>
+<details>
+  <summary><span style="color:rgb(0, 152, 241)">How it would look on x86</span></summary>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">section .text</span><br><span class="line">    global _start <span class="comment">// Infrom the linker where is program start</span></span><br><span class="line"></span><br><span class="line">_start<span class="punctuation">:</span>            </span><br><span class="line">    mov rax<span class="punctuation">,</span> <span class="number">1</span>   </span><br><span class="line">    mov rdi<span class="punctuation">,</span> <span class="number">0</span>    </span><br><span class="line">    int <span class="number">0x80</span>       </span><br></pre></td></tr></table></figure>
+By calling *int 0x80* you invoke interrupt and go to x80 address in interrupt handler table
+the 0x80 == 128 is special interrupt programmed only for program system calls
+</details>
+
+<details>
+  <summary><span style="color:rgb(0, 152, 241)">How this code became executable</span></summary>
+Unless like in C's gcc going through pre-processing, compiling, assembling and linking.
+Assembly doesn't need to be pre-processed or compiled. On linux you can use <span class="reveal-text" before="NASM" after="Netwide Assembler"></span> or <span class="reveal-text" before="AS" after="GNU Assembler"></span> as a assembling tool.
+I used:
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nasm -f elf64 -o exit.o exit.asm </span><br></pre></td></tr></table></figure>
+where elf64 is format of object file it could be win32
+The next step is linking 
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ld exit.o -o exit</span><br></pre></td></tr></table></figure>
+which is resolving symbols relocating adresses from relative to absolute and making final excutable format, sets up the entry point, the sections (text, data, etc.), and the memory layout necessary for the operating system to run the program.
+</details>
+
+<p>The syscall instruction invokes the syscall with the code contained in the rax register. Then, depending on the code, arguments are required, which are successively passed in rdi, rsi, rdx, r10, r8, r9, this is the convention adopted. <a target="_blank" rel="noopener" href="https://x64.syscall.sh/">here</a> you can find list of all syscalls on x86-64 to see how it look like.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0.10</span>   msec task-clock:u            #    <span class="number">0.257</span> CPUs utilized</span><br><span class="line"><span class="number">1</span>      page-faults:u                #    <span class="number">9.980</span> K/sec</span><br><span class="line"><span class="number">1289</span>   cycles:u                     #    <span class="number">0.013</span> GHz</span><br><span class="line"><span class="number">5</span>      stalled-cycles-frontend:u    #    <span class="number">0.39</span>% frontend cycles idle</span><br><span class="line"><span class="number">0</span>      stalled-cycles-backend:u</span><br><span class="line"><span class="number">4</span>      instructions:u               #    <span class="number">0.00</span>  insn per cycle</span><br></pre></td></tr></table></figure>
+<h2 id="Understanding-Program-Execution-in-UNIX-like-Systems"><a href="#Understanding-Program-Execution-in-UNIX-like-Systems" class="headerlink" title="Understanding Program Execution in UNIX-like Systems"></a>Understanding Program Execution in UNIX-like Systems</h2><p>In UNIX-like systems, programs start execution from the <em>_start</em> function, not the <em>main()</em> function, as we are accustomed to in C. The <em>main()</em> function is essentially a wrapper, like many other components in C. Somewhere within <em>_start</em>, the <em>__libc_start_main</em> function is invoked, followed by a call to main. Here’s a simplified visualization of this process:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">_start<span class="punctuation">:</span></span><br><span class="line">    <span class="comment">// rdi already contains argc (passed by kernel)</span></span><br><span class="line">    <span class="comment">// rsi already contains argv (passed by kernel)</span></span><br><span class="line">    <span class="comment">// stack already aligned somewhere</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Call main handler</span></span><br><span class="line">    call __libc_start_main</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Exit</span></span><br><span class="line">    mov rdi<span class="punctuation">,</span> rax  <span class="comment">// Use main&#x27;s return value as exit status</span></span><br><span class="line">    mov rax<span class="punctuation">,</span> <span class="number">60</span>   <span class="comment">// syscall number for exit</span></span><br><span class="line">    syscall</span><br></pre></td></tr></table></figure>
+<p>If you’re wondering how the return value ends up in the rax register, it’s due to the <a target="_blank" rel="noopener" href="https://wiki.osdev.org/System_V_ABI">System V ABI calling convention</a>. This convention dictates how functions pass arguments and return values between each other and the operating system.</p>
+<h2 id="Do-All-Programs-Need-an-Exit"><a href="#Do-All-Programs-Need-an-Exit" class="headerlink" title="Do All Programs Need an Exit?"></a>Do All Programs Need an Exit?</h2><p>What happens if there is no exit system call? Without an explicit exit, the instruction pointer would jump to the next address, fetch the next memory block, and attempt to decode and execute it. This would likely result in a segmentation fault, as the memory would not contain valid executable instructions.</p>
+<p>You might wonder why in C you can write <code>int main()&#123;&#125;</code> without explicitly returning a value or even use <code>void main()&#123;&#125;</code> (which is still accepted for backward compatibility). Surprisingly, the program will compile and execute correctly.</p>
+<p>If you don’t provide a return value, the glibc implicitly exits with 0 code. This behavior is evident when using <em>void main()</em>, we see exit call is present:<br><img src="/2024/09/17/smallest-asm-program/main_no_return.png" alt="alt text"></p>
+<h3 id="ret-or-sys-exit"><a href="#ret-or-sys-exit" class="headerlink" title="ret or sys_exit"></a>ret or sys_exit</h3><p>The _start function is the entry point, at least for statically linked programs, for dynamically linked programs (if dynamic loader performs C&#x2F;C++&#x2F;Objective-C startup initialization by including the entry point from crt1.o) it could be the dynamic linker itself. But what is always the same is Initial Process Stack.<br><img src="https://i.sstatic.net/XiiyH.png" alt="alt text"><br>Ret moves instruction pointer to a return address on the stack which doesn’t exist here, so calling ret from _start surely will cause segfault. ret can be called from main (because a new stack frame was created by calling this function) sys_exit or exit() can also be called which will prevent us from returning to _start.</p>
+<h2 id="glibc’s-Role"><a href="#glibc’s-Role" class="headerlink" title="glibc’s Role"></a>glibc’s Role</h2><p>Saying that three lines of assembly eliminate redundancy in glibc misses the broader context. Glibc acts as an intermediary, making system calls like <em>sys_write</em> easier to use by providing wrappers like direct <em>write()</em> or indirect <em>printf()</em>. It handles details like register saving&#x2F;restoring. While direct assembly skips everything, glibc flushing stdout, thread management, and other necessary actions before the final program exit, aremaking it much more than just “redundant code.” Skipping these operations could lead to undefined behavior or even program crashes.</p>
+<p>For example, after calling the <em>write()</em>, the program needs to continue executing correctly, so it’s essential to restore the registers to avoid overwriting critical data. This isn’t necessary for <em>sys_exit</em> because it clobbers some of registers an changes context anyway, it’s crucial for other syscalls where the program continues running.</p>
+<p>There is  also syscall(), a small library function that invokes the system call whose assembly language interface has the specified number with the specified arguments.  Employing syscall() is useful, for example, when invoking a system call that has no wrapper function in the C library. It provides saving, restoring registers and returning an error which is always a better solution than a syscall in direct Assembly.</p>
+<h3 id="Glibc-glibc-libc-is-there-sth-other"><a href="#Glibc-glibc-libc-is-there-sth-other" class="headerlink" title="Glibc, glibc, libc is there sth other?"></a>Glibc, glibc, libc is there sth other?</h3><p><a target="_blank" rel="noopener" href="https://musl.libc.org/">Musl</a> is a smaller alternative to glibc (7x smaller), and it’s more common to see inline assembly syscalls used there. However, glibc’s complexity supports more features, safer execution. Hope I’ll write something more about it someday.</p>
+<h2 id="Vicious-circle"><a href="#Vicious-circle" class="headerlink" title="Vicious circle"></a>Vicious circle</h2><p>What’s funny is that glibc itself is not able to call any syscall using C, because it doesn’t have direct access to registers, for that you need an assembler, which will probably be somewhere in the depths of glibc. Calling syscall in assembly causes an interrupt, the system goes into kernel mode and uses IDT to determine how to process a specific interrupt, finally the interrupt goes to entry_64.S, which will pass control to the appropriate handler written in C via syscall_table, where there is usually something like:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">asmlinkage <span class="type">long</span> <span class="title function_">sys_read</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> fd, <span class="type">char</span> __user *buf, <span class="type">size_t</span> count)</span>;</span><br><span class="line">asmlinkage <span class="type">long</span> <span class="title function_">sys_write</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> fd, <span class="type">const</span> <span class="type">char</span> __user *buf, <span class="type">size_t</span> count)</span>;</span><br></pre></td></tr></table></figure>
+<p>Then the appropriate function, e.g. sys_write, can be used. As you can see, it goes full circle C-&gt;assembly-&gt;C where returning of syscall code will look simillarly with sysret called in assembly.</p>
+<h2 id="sth-else"><a href="#sth-else" class="headerlink" title="sth else"></a>sth else</h2><p>Today, going down to assembly is rarely justified when embedded devices have developed so much, where memory is no longer so limited, and clock speeds have increased so much that time is also no longer an issue. However, it is always worth being aware of how it works “under the hood”.</p>
+<p>In this article I used the expressions “process” and “program” quite interchangeably, in this context it did not have a very big meaning, but it will gain importance in my next article in which I will discuss how threads are created, what is clone() fork() exceve() or pthread_create().</p>
+<p>or </p>
+<p>I really appreciate the criticism, so if you have any reservations, leave a comment ⬇️</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/categories/">Category</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/dxrgrabowski">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Preface"><span class="toc-number">1.</span> <span class="toc-text">Preface</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Understanding-Program-Execution-in-UNIX-like-Systems"><span class="toc-number">2.</span> <span class="toc-text">Understanding Program Execution in UNIX-like Systems</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Do-All-Programs-Need-an-Exit"><span class="toc-number">3.</span> <span class="toc-text">Do All Programs Need an Exit?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ret-or-sys-exit"><span class="toc-number">3.1.</span> <span class="toc-text">ret or sys_exit</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#glibc%E2%80%99s-Role"><span class="toc-number">4.</span> <span class="toc-text">glibc’s Role</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Glibc-glibc-libc-is-there-sth-other"><span class="toc-number">4.1.</span> <span class="toc-text">Glibc, glibc, libc is there sth other?</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Vicious-circle"><span class="toc-number">5.</span> <span class="toc-text">Vicious circle</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sth-else"><span class="toc-number">6.</span> <span class="toc-text">sth else</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&text=smallest-asm-program"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&title=smallest-asm-program"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&is_video=false&description=smallest-asm-program"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=smallest-asm-program&body=Check out this article: http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&title=smallest-asm-program"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&title=smallest-asm-program"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&title=smallest-asm-program"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&title=smallest-asm-program"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&name=smallest-asm-program&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://dxrgrabowski.github.io/2024/09/17/smallest-asm-program/&t=smallest-asm-program"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2024
+    Dawid Grabowski
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Category</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/dxrgrabowski">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'dxrgrabowski/dxrgrabowski.github.io';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>
