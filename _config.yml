@@ -107,3 +107,4 @@ theme: cactus
 deploy:
   type: git
   repo: https://github.com/dxrgrabowski/dxrgrabowski.github.io
+  branch: gh-pages
