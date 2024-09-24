@@ -1,5 +1,5 @@
 ---
-title: How many clock cycles cpu need to execute smallest program in C
+title: "From Instruction Count to Clock Cycles: Exploring the Performance of Minimal C Program"
 date: 2024-09-07 14:22:24
 tags: 
 - C 
