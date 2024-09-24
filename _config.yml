@@ -5,7 +5,8 @@
 # Site
 title: Dawid Grabowski's Blog
 subtitle: ''
-description: ''
+description: >- 
+  Welcome to my technology blog. As I write this, I hope that my future self will recognize that, regardless of the reach of my posts, the content presented here was created with genuine passion and a zeal for discovery and learning. This is the primary goal of this blog - through creating articles, I learn extensively and systematize knowledge that often only becomes clear after writing the first piece.<br><br><span class="reveal-text" before="Verba volant, scripta manent" after="spoken words fly away, written words remain"></span>.Verba volant, scripta manent (spoken words fly away, written words remain) takes on a broader meaning in this context. By documenting my tech explorations and insights, I'm not only preserving knowledge for myself but also sharing it with a community of like-minded individuals. Each post represents a step in my ongoing journey of technological understanding and growth.<br><br>I invite you to join me in this pursuit of knowledge. Whether you're here to learn, share insights, or simply explore, I hope you find value in the content presented.
 keywords:
 author: Dawid Grabowski
 language: en
