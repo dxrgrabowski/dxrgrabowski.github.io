@@ -1,7 +1,7 @@
 ---
 title: 🌍 My Erasmus Experience in Dresden
 categories:
-- Trips
+- Lifestyle
 ---
 ## 📚 Academic Pursuits: A Journey into the Heart of Technology
 

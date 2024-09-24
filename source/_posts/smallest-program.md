@@ -3,12 +3,12 @@ title: How many clock cycles cpu need to execute smallest program in C
 date: 2024-09-07 14:22:24
 tags: 
 - C 
-- C++ 
 - programming
 - valgrind
 - perf
 - assembly
 - linker
+- libc
 categories:
 - Operating System Construction 
 ---
@@ -81,4 +81,4 @@ Equally important are the variables related to memory management, in particular 
 
 All tunables you can find [here](https://www.gnu.org/software/libc/manual/html_node/Tunables.html) or by calling ```/lib64/ld-linux-x86-64.so.2 --list-tunables```
 
-This is my first technical article, the next one will be about how the situation will change when we add printf / cout to the program, and then the shortest program in asm and its binary. I really appreciate the criticism, so if you have any reservations, leave a comment ⬇️
+This is my first technical article, in the next one we will get deeper into C compiled without glibc and the shortest program in asm and its binary. I really appreciate the criticism, so if you have any reservations, leave a comment ⬇️

@@ -2,16 +2,27 @@
 title: smallest-asm-program
 date: 2024-09-17 14:50:52
 tags:
+- assembly
+- C
+- gcc
+- libc
+- perf
+- syscall
+- process
+- linker
+- kernel
+categories:
+- Operating System Construction 
 ---
 ## Preface
-As we saw recently when trying to create the shortest C program. The biggest cost in this program was glibc and its standard procedures for running the program, as is the case with asm. Today we will see.
+As we saw recently when trying to create the shortest C program. The biggest cost in this program was glibc and its overhead for running the program. How is it look like in the case of asm? Today we will see.
 
 I know how scary assembly is if you've only heard about it. But it's not as scary as they say. I'll present everything in a very simple way so that everyone can understand what's going on and what's responsible for what.
 
 To fully understand what is happening first I will tell you what is syscall.
-By default, programs run in user space, which is a restricted execution environment where the program cannot directly access hardware resources. In user mode, a program does not have direct access I/O operations, network access, managing system processes or system files. To interact with it programs need to communicate with the kernel. A system call (syscall) is the mechanism by which a program running in user mode requests services from the kernel. e.g. *write()* used in prinf or exit() to exit process. 
+By default, programs run in user mode, which is a restricted execution environment where the program cannot directly access hardware resources. In user mode, a program does not have direct access I/O operations, network access, managing system processes or system files. To interact with it programs need to communicate with the kernel via kernel mode. A system call (syscall) is the mechanism by which a program running in user mode requests services from the kernel. e.g. *write()* used in *prinf()* to access stdout or *exit()* to exit process. More details and determining the moment at which we switch between modes later in this article.
 
-In this article *sys_write* and *write()* to differentiate the real syscall from glibc function call.
+I will use *sys_write* and *write()* to differentiate between the real syscall and glibc function call.
 
 I think now is a good moment to reveal that we can compile a C file without glibc that can be done with flag ```-nostdlib``` the fact is, that this program will not be simmilar to C.
 
@@ -110,26 +121,39 @@ What happens if there is no exit system call? Without an explicit exit, the inst
 
 You might wonder why in C you can write `int main(){}` without explicitly returning a value or even use `void main(){}` (which is still accepted for backward compatibility). Surprisingly, the program will compile and execute correctly.
 
-Here’s why: if you don't provide a return value, the glibc implicitly exits with 0 code. This behavior is evident when using *void main()*, we see exit call is present:
+If you don't provide a return value, the glibc implicitly exits with 0 code. This behavior is evident when using *void main()*, we see exit call is present:
 ![alt text](main_no_return.png)
+
+### ret or sys_exit
+The _start function is the entry point, at least for statically linked programs, for dynamically linked programs (if dynamic loader performs C/C++/Objective-C startup initialization by including the entry point from crt1.o) it could be the dynamic linker itself. But what is always the same is Initial Process Stack.
+![alt text](https://i.sstatic.net/XiiyH.png)
+Ret moves instruction pointer to a return address on the stack which doesn't exist here, so calling ret from _start surely will cause segfault. ret can be called from main (because a new stack frame was created by calling this function) sys_exit or exit() can also be called which will prevent us from returning to _start.
+
 ## glibc's Role
-glibc acts as an intermediary, making system calls like *sys_write* easier to use by providing wrappers like direct *write()* or indirect *printf()*. and handling details like register saving/restoring. While direct assembly can skip some of this overhead, glibc ensures necessary things like flushing stdout, thread management, and proper exit handling, making it much more than just "redundant code."
+Saying that three lines of assembly eliminate redundancy in glibc misses the broader context. Glibc acts as an intermediary, making system calls like *sys_write* easier to use by providing wrappers like direct *write()* or indirect *printf()*. It handles details like register saving/restoring. While direct assembly skips everything, glibc flushing stdout, thread management, and other necessary actions before the final program exit, aremaking it much more than just "redundant code." Skipping these operations could lead to undefined behavior or even program crashes.
 
-We can bypass some of this overhead by using assembly directly. However, glibc provides far more than just convenience it also manages critical aspects like register saving and restoring during system calls. Not every syscall have it's own wrapper in glibc, that's why syscall() can call a
+For example, after calling the *write()*, the program needs to continue executing correctly, so it's essential to restore the registers to avoid overwriting critical data. This isn't necessary for *sys_exit* because it clobbers some of registers an changes context anyway, it's crucial for other syscalls where the program continues running.
 
-For example, after calling the *write()*, the program needs to continue executing correctly, so it's essential to restore the registers to avoid overwriting critical data. This isn't necessary for exit(), it's crucial for other syscalls where the program continues running.
+There is  also syscall(), a small library function that invokes the system call whose assembly language interface has the specified number with the specified arguments.  Employing syscall() is useful, for example, when invoking a system call that has no wrapper function in the C library. It provides saving, restoring registers and returning an error which is always a better solution than a syscall in direct Assembly.
 
-Saying that three lines of assembly eliminate redundancy in glibc misses the broader context. glibc, which consists of hundreds of thousands of lines of code, ensures thread termination, buffer flushing (e.g., stdout), and other necessary actions before the final program exit. Skipping these operations could lead to undefined behavior or even program crashes.
-
-so there is implemented syscall() which is doing something very important which is saving and restoring registers because in above example in rax or rdi registers could be some used by your program critical data. In terms of exit() it is not very important becasue you just want to exit process. As you can see even function call for syscalls in C are not directly calling what you want. But it is all about security and implemented features e.g. threads have to be exited before final exit of process, stdout buffer needs to be flushed. Saying that 3 lines of asssemby code just removed some redundancy in glibc is great mistake and act of disrecpect to developers of this a few hundread thousands lines of code library. 
-
-## Glibc, glibc, libc is there sth other
-[Musl](https://musl.libc.org/) is a smaller alternative to glibc (7x smaller), and it's more common to see inline assembly syscalls used there. However, glibc’s complexity supports more features and safer execution. Hope I'll write something more about it someday.
+### Glibc, glibc, libc is there sth other?
+[Musl](https://musl.libc.org/) is a smaller alternative to glibc (7x smaller), and it's more common to see inline assembly syscalls used there. However, glibc’s complexity supports more features, safer execution. Hope I'll write something more about it someday.
 
 ## Vicious circle
+What's funny is that glibc itself is not able to call any syscall using C, because it doesn't have direct access to registers, for that you need an assembler, which will probably be somewhere in the depths of glibc. Calling syscall in assembly causes an interrupt, the system goes into kernel mode and uses IDT to determine how to process a specific interrupt, finally the interrupt goes to entry_64.S, which will pass control to the appropriate handler written in C via syscall_table, where there is usually something like:
+```c
+asmlinkage long sys_read(unsigned int fd, char __user *buf, size_t count);
+asmlinkage long sys_write(unsigned int fd, const char __user *buf, size_t count);
+```
+Then the appropriate function, e.g. sys_write, can be used. As you can see, it goes full circle C->assembly->C where returning of syscall code will look simillarly with sysret called in assembly.
 
-Today, going down to assembly is rarely justified when embedded devices have developed so much, where memory is no longer so limited, and clock speeds have increased so much that time is also no longer an issue. However, it is always worth being aware of how it works "under the hood"
+## sth else
+Today, going down to assembly is rarely justified when embedded devices have developed so much, where memory is no longer so limited, and clock speeds have increased so much that time is also no longer an issue. However, it is always worth being aware of how it works "under the hood".
 
-In this article I used the expressions process and program quite interchangeably, in this context it did not have a very big meaning, but it will gain importance in my next article in which I will discuss how threads are created, what is clone() fork() exceve() pthread_create()
+In this article I used the expressions "process" and "program" quite interchangeably, in this context it did not have a very big meaning, but it will gain importance in my next article in which I will discuss how threads are created, what is clone() fork() exceve() or pthread_create().
 
-<span style="color:rgb(0, 152, 241)">Fun fact</span> glibc needs to use assembly because C is not able to call syscall by itself. At syscall explanation I applied simplification because write() or exit() are just wrappers for assembler calling certain syscall.
+or 
+
+
+
+I really appreciate the criticism, so if you have any reservations, leave a comment ⬇️
