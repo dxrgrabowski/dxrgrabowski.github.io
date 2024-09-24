@@ -1,5 +1,5 @@
 ---
-title: smallest-asm-program
+title: 'Syscalls Demystified: Understanding the Assembly-Level Mechanics'
 date: 2024-09-17 14:50:52
 tags:
 - assembly
@@ -19,13 +19,17 @@ As we saw recently when trying to create the shortest C program. The biggest cos
 
 I know how scary assembly is if you've only heard about it. But it's not as scary as they say. I'll present everything in a very simple way so that everyone can understand what's going on and what's responsible for what.
 
+## What is a syscall?
 To fully understand what is happening first I will tell you what is syscall.
-By default, programs run in user mode, which is a restricted execution environment where the program cannot directly access hardware resources. In user mode, a program does not have direct access I/O operations, network access, managing system processes or system files. To interact with it programs need to communicate with the kernel via kernel mode. A system call (syscall) is the mechanism by which a program running in user mode requests services from the kernel. e.g. *write()* used in *prinf()* to access stdout or *exit()* to exit process. More details and determining the moment at which we switch between modes later in this article.
+By default, programs run in user mode, which is a restricted execution environment where the program cannot directly access hardware resources. In user mode, a program does not have direct access I/O operations, network access, managing system processes or system files. To interact with it programs need to communicate with the kernel via kernel mode. 
+
+### Syscall mechanism
+A system call (syscall) is the mechanism by which a program running in user mode requests services from the kernel. e.g. *write()* used in *prinf()* to access stdout or *exit()* to exit process. More details and determining the moment at which we switch between modes later in this article.
 
 I will use *sys_write* and *write()* to differentiate between the real syscall and glibc function call.
-
+## Writing a program without glibc
 I think now is a good moment to reveal that we can compile a C file without glibc that can be done with flag ```-nostdlib``` the fact is, that this program will not be simmilar to C.
-
+### Smallest C program without glibc
 ```c
 void _start() {
     __asm__ volatile (
@@ -35,7 +39,8 @@ void _start() {
     );
 }
 ```
-And its perf:
+### Performance of the program
+This is the performance result of the above code::
 ```java
 0.06   msec task-clock:u            #    0.284 CPUs utilized
 1      page-faults:u                #    16.743 K/sec
@@ -45,7 +50,7 @@ And its perf:
 6      instructions:u               #    0.01  insn per cycle
 ```
 As we can see the result is much better than the last C static linked program, thats because we don't need glibc anymore. 
-
+## Assembly Explanation
 Now time for some assembly which will explain us what happened above:
 ```json
 section .text
@@ -72,7 +77,7 @@ _start:
 By calling *int 0x80* you invoke interrupt and go to x80 address in interrupt handler table
 the 0x80 == 128 is special interrupt programmed only for program system calls
 </details>
-
+<br>
 <details>
   <summary><span style="color:rgb(0, 152, 241)">How this code became executable</span></summary>
 Unless like in C's gcc going through pre-processing, compiling, assembling and linking.
@@ -89,7 +94,11 @@ ld exit.o -o exit
 which is resolving symbols relocating adresses from relative to absolute and making final excutable format, sets up the entry point, the sections (text, data, etc.), and the memory layout necessary for the operating system to run the program.
 </details>
 
-The syscall instruction invokes the syscall with the code contained in the rax register. Then, depending on the code, arguments are required, which are successively passed in rdi, rsi, rdx, r10, r8, r9, this is the convention adopted. [here](https://x64.syscall.sh/) you can find list of all syscalls on x86-64 to see how it look like.
+## Invoking syscalls and register usage
+The syscall instruction invokes the syscall with the code contained in the rax register. Then, depending on the code, arguments are required, which are successively passed in rdi, rsi, rdx, r10, r8, r9, this is the convention adopted.
+### List of syscalls
+[here](https://x64.syscall.sh/) you can find list of all syscalls on x86-64 to see how it look like.
+### Performance metrics of smallet assembly program in terms of instructions:
 ```java
 0.10   msec task-clock:u            #    0.257 CPUs utilized
 1      page-faults:u                #    9.980 K/sec
@@ -98,7 +107,7 @@ The syscall instruction invokes the syscall with the code contained in the rax r
 0      stalled-cycles-backend:u
 4      instructions:u               #    0.00  insn per cycle
 ```
-## Understanding Program Execution in UNIX-like Systems
+## Where is the actual entry point to the program?
 In UNIX-like systems, programs start execution from the *_start* function, not the *main()* function, as we are accustomed to in C. The *main()* function is essentially a wrapper, like many other components in C. Somewhere within *_start*, the *__libc_start_main* function is invoked, followed by a call to main. Here’s a simplified visualization of this process:
 ```json
 _start:
@@ -147,13 +156,10 @@ asmlinkage long sys_write(unsigned int fd, const char __user *buf, size_t count)
 ```
 Then the appropriate function, e.g. sys_write, can be used. As you can see, it goes full circle C->assembly->C where returning of syscall code will look simillarly with sysret called in assembly.
 
-## sth else
+## Is it worth it?
 Today, going down to assembly is rarely justified when embedded devices have developed so much, where memory is no longer so limited, and clock speeds have increased so much that time is also no longer an issue. However, it is always worth being aware of how it works "under the hood".
 
+## What next?
 In this article I used the expressions "process" and "program" quite interchangeably, in this context it did not have a very big meaning, but it will gain importance in my next article in which I will discuss how threads are created, what is clone() fork() exceve() or pthread_create().
-
-or 
-
-
 
 I really appreciate the criticism, so if you have any reservations, leave a comment ⬇️
