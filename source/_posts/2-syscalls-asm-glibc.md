@@ -131,11 +131,11 @@ What happens if there is no exit system call? Without an explicit exit, the inst
 You might wonder why in C you can write `int main(){}` without explicitly returning a value or even use `void main(){}` (which is still accepted for backward compatibility). Surprisingly, the program will compile and execute correctly.
 
 If you don't provide a return value, the glibc implicitly exits with 0 code. This behavior is evident when using *void main()*, we see exit call is present:
-![alt text](main_no_return.png)
+![exit call in callee list](main_no_return.png)
 
 ### ret or sys_exit
 The _start function is the entry point, at least for statically linked programs, for dynamically linked programs (if dynamic loader performs C/C++/Objective-C startup initialization by including the entry point from crt1.o) it could be the dynamic linker itself. But what is always the same is Initial Process Stack.
-![alt text](https://i.sstatic.net/XiiyH.png)
+![initial process stack](init_process_stack.png)
 Ret moves instruction pointer to a return address on the stack which doesn't exist here, so calling ret from _start surely will cause segfault. ret can be called from main (because a new stack frame was created by calling this function) sys_exit or exit() can also be called which will prevent us from returning to _start.
 
 ## glibc's Role
