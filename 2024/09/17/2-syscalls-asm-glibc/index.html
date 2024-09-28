@@ -14,18 +14,18 @@
 <meta property="og:description" content="PrefaceAs we saw recently when trying to create the shortest C program. The biggest cost in this program was glibc and its overhead for running the program. How is it look like in the case of asm? Tod">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://dxrgrabowski.github.io/2024/09/17/2-syscalls-asm-glibc/main_no_return.png">
-<meta property="og:image" content="https://i.sstatic.net/XiiyH.png">
+<meta property="og:image" content="http://dxrgrabowski.github.io/2024/09/17/2-syscalls-asm-glibc/init_process_stack.png">
 <meta property="article:published_time" content="2024-09-17T14:50:52.000Z">
-<meta property="article:modified_time" content="2024-09-27T12:10:24.605Z">
+<meta property="article:modified_time" content="2024-09-28T19:53:26.432Z">
 <meta property="article:author" content="Dawid Grabowski">
-<meta property="article:tag" content="assembly">
 <meta property="article:tag" content="C">
-<meta property="article:tag" content="gcc">
-<meta property="article:tag" content="libc">
 <meta property="article:tag" content="perf">
+<meta property="article:tag" content="assembly">
+<meta property="article:tag" content="linker">
+<meta property="article:tag" content="libc">
+<meta property="article:tag" content="gcc">
 <meta property="article:tag" content="syscall">
 <meta property="article:tag" content="process">
-<meta property="article:tag" content="linker">
 <meta property="article:tag" content="kernel">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://dxrgrabowski.github.io/2024/09/17/2-syscalls-asm-glibc/main_no_return.png">
@@ -226,8 +226,8 @@ which is resolving symbols relocating adresses from relative to absolute and mak
 <p>If you’re wondering how the return value ends up in the rax register, it’s due to the <a target="_blank" rel="noopener" href="https://wiki.osdev.org/System_V_ABI">System V ABI calling convention</a>. This convention dictates how functions pass arguments and return values between each other and the operating system.</p>
 <h2 id="Do-All-Programs-Need-an-Exit"><a href="#Do-All-Programs-Need-an-Exit" class="headerlink" title="Do All Programs Need an Exit?"></a>Do All Programs Need an Exit?</h2><p>What happens if there is no exit system call? Without an explicit exit, the instruction pointer would jump to the next address, fetch the next memory block, and attempt to decode and execute it. This would likely result in a segmentation fault, as the memory would not contain valid executable instructions.</p>
 <p>You might wonder why in C you can write <code>int main()&#123;&#125;</code> without explicitly returning a value or even use <code>void main()&#123;&#125;</code> (which is still accepted for backward compatibility). Surprisingly, the program will compile and execute correctly.</p>
-<p>If you don’t provide a return value, the glibc implicitly exits with 0 code. This behavior is evident when using <em>void main()</em>, we see exit call is present:<br><img src="/2024/09/17/2-syscalls-asm-glibc/main_no_return.png" alt="alt text"></p>
-<h3 id="ret-or-sys-exit"><a href="#ret-or-sys-exit" class="headerlink" title="ret or sys_exit"></a>ret or sys_exit</h3><p>The _start function is the entry point, at least for statically linked programs, for dynamically linked programs (if dynamic loader performs C&#x2F;C++&#x2F;Objective-C startup initialization by including the entry point from crt1.o) it could be the dynamic linker itself. But what is always the same is Initial Process Stack.<br><img src="https://i.sstatic.net/XiiyH.png" alt="alt text"><br>Ret moves instruction pointer to a return address on the stack which doesn’t exist here, so calling ret from _start surely will cause segfault. ret can be called from main (because a new stack frame was created by calling this function) sys_exit or exit() can also be called which will prevent us from returning to _start.</p>
+<p>If you don’t provide a return value, the glibc implicitly exits with 0 code. This behavior is evident when using <em>void main()</em>, we see exit call is present:<br><img src="/2024/09/17/2-syscalls-asm-glibc/main_no_return.png" alt="exit call in callee list"></p>
+<h3 id="ret-or-sys-exit"><a href="#ret-or-sys-exit" class="headerlink" title="ret or sys_exit"></a>ret or sys_exit</h3><p>The _start function is the entry point, at least for statically linked programs, for dynamically linked programs (if dynamic loader performs C&#x2F;C++&#x2F;Objective-C startup initialization by including the entry point from crt1.o) it could be the dynamic linker itself. But what is always the same is Initial Process Stack.<br><img src="/2024/09/17/2-syscalls-asm-glibc/init_process_stack.png" alt="initial process stack"><br>Ret moves instruction pointer to a return address on the stack which doesn’t exist here, so calling ret from _start surely will cause segfault. ret can be called from main (because a new stack frame was created by calling this function) sys_exit or exit() can also be called which will prevent us from returning to _start.</p>
 <h2 id="glibc’s-Role"><a href="#glibc’s-Role" class="headerlink" title="glibc’s Role"></a>glibc’s Role</h2><p>Saying that three lines of assembly eliminate redundancy in glibc misses the broader context. Glibc acts as an intermediary, making system calls like <em>sys_write</em> easier to use by providing wrappers like direct <em>write()</em> or indirect <em>printf()</em>. It handles details like register saving&#x2F;restoring. While direct assembly skips everything, glibc flushing stdout, thread management, and other necessary actions before the final program exit, aremaking it much more than just “redundant code.” Skipping these operations could lead to undefined behavior or even program crashes.</p>
 <p>For example, after calling the <em>write()</em>, the program needs to continue executing correctly, so it’s essential to restore the registers to avoid overwriting critical data. This isn’t necessary for <em>sys_exit</em> because it clobbers some of registers an changes context anyway, it’s crucial for other syscalls where the program continues running.</p>
 <p>There is  also syscall(), a small library function that invokes the system call whose assembly language interface has the specified number with the specified arguments.  Employing syscall() is useful, for example, when invoking a system call that has no wrapper function in the C library. It provides saving, restoring registers and returning an error which is always a better solution than a syscall in direct Assembly.</p>
