@@ -41,4 +41,6 @@ Dresden’s vibrant student life was a pleasant surprise, fueled by the active E
 
 Choosing Dresden for my Erasmus semester was one of the best decisions I made. It allowed me to advance my technical skills, improved my German, and immerse myself in a new culture. The friendships, knowledge, and memories from this journey are invaluable.
 
+This journey, and specifically the fascinating subject of OSC, indirectly prompted me to create a blog for it.
+
 If you’re considering Erasmus, I encourage you to look beyond the typical sunny spots and explore options like Dresden, where academic challenges, a lively student scene, and the charm of a unique city await you. 🌟

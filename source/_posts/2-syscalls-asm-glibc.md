@@ -162,4 +162,4 @@ Today, going down to assembly is rarely justified when embedded devices have dev
 ## What next?
 In this article I used the expressions "process" and "program" quite interchangeably, in this context it did not have a very big meaning, but it will gain importance in my next article in which I will discuss how threads are created, what is clone() fork() exceve() or pthread_create().
 
-I really appreciate the criticism, so if you have any reservations, leave a comment ⬇️
+I really appreciate any feedback, so if you have any comments or suggestions, feel free to leave a comment below ⬇️.
