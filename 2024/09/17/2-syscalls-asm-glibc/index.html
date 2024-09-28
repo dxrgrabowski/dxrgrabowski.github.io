@@ -16,16 +16,16 @@
 <meta property="og:image" content="http://dxrgrabowski.github.io/2024/09/17/2-syscalls-asm-glibc/main_no_return.png">
 <meta property="og:image" content="https://i.sstatic.net/XiiyH.png">
 <meta property="article:published_time" content="2024-09-17T14:50:52.000Z">
-<meta property="article:modified_time" content="2024-09-24T18:28:26.797Z">
+<meta property="article:modified_time" content="2024-09-27T12:10:24.605Z">
 <meta property="article:author" content="Dawid Grabowski">
-<meta property="article:tag" content="C">
-<meta property="article:tag" content="perf">
 <meta property="article:tag" content="assembly">
-<meta property="article:tag" content="linker">
-<meta property="article:tag" content="libc">
+<meta property="article:tag" content="C">
 <meta property="article:tag" content="gcc">
+<meta property="article:tag" content="libc">
+<meta property="article:tag" content="perf">
 <meta property="article:tag" content="syscall">
 <meta property="article:tag" content="process">
+<meta property="article:tag" content="linker">
 <meta property="article:tag" content="kernel">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://dxrgrabowski.github.io/2024/09/17/2-syscalls-asm-glibc/main_no_return.png">
@@ -100,6 +100,8 @@
     <br/>
     <span id="actions">
       <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2024/09/27/3-tiniest-elf/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
         <li><a class="icon" aria-label="Next post" href="/2024/09/07/1-smallest-c-prog/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
@@ -235,7 +237,7 @@ which is resolving symbols relocating adresses from relative to absolute and mak
 <p>Then the appropriate function, e.g. sys_write, can be used. As you can see, it goes full circle C-&gt;assembly-&gt;C where returning of syscall code will look simillarly with sysret called in assembly.</p>
 <h2 id="Is-it-worth-it"><a href="#Is-it-worth-it" class="headerlink" title="Is it worth it?"></a>Is it worth it?</h2><p>Today, going down to assembly is rarely justified when embedded devices have developed so much, where memory is no longer so limited, and clock speeds have increased so much that time is also no longer an issue. However, it is always worth being aware of how it works “under the hood”.</p>
 <h2 id="What-next"><a href="#What-next" class="headerlink" title="What next?"></a>What next?</h2><p>In this article I used the expressions “process” and “program” quite interchangeably, in this context it did not have a very big meaning, but it will gain importance in my next article in which I will discuss how threads are created, what is clone() fork() exceve() or pthread_create().</p>
-<p>I really appreciate the criticism, so if you have any reservations, leave a comment ⬇️</p>
+<p>I really appreciate any feedback, so if you have any comments or suggestions, feel free to leave a comment below ⬇️.</p>
 
   </div>
 </article>
