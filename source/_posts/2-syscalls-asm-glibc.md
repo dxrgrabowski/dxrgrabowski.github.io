@@ -160,6 +160,6 @@ Then the appropriate function, e.g. sys_write, can be used. As you can see, it g
 Today, going down to assembly is rarely justified when embedded devices have developed so much, where memory is no longer so limited, and clock speeds have increased so much that time is also no longer an issue. However, it is always worth being aware of how it works "under the hood".
 
 ## What next?
-In this article I used the expressions "process" and "program" quite interchangeably, in this context it did not have a very big meaning, but it will gain importance in my next article in which I will discuss how threads are created, what is clone() fork() exceve() or pthread_create().
+The next article will mainly cover the size of the executable itself, the construction of the elf64 file, and how the system reads and executes it and probably how to construct it by yourself.
 
 I really appreciate any feedback, so if you have any comments or suggestions, feel free to leave a comment below ⬇️.
