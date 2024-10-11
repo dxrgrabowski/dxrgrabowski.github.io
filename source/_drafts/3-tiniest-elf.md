@@ -16,13 +16,16 @@ int main() { return 1; }
 ```
 was 15776 bytes in size when dynamically linked and 900224 bytes in size when statically linked. Although on today's computers these values ​​do not make any impression, but still it is surprising that a program that theoretically has several instructions weighs so much. This article delves into the techniques for creating extremely tiny ELF64 (Executable and Linkable Format 64bit) executables on Linux systems.
 
-Unfortunately, in the case of C, the options are quite limited. There is also no point in removing individual sections from ELF using ```strip -R``` and making sure that everything works correctly, because for such an application we can use a lighter library adapted to embedded systems. Like [uClibc](https://uclibc-ng.org/), written for a very limited Linux without MMU or other libraries typically for microcontrollers, such as [newlib](https://sourceware.org/newlib/) or its descendant [picolibc](https://github.com/picolibc/picolibc). Today, glibc is used in most cases, because most Linux distros contains it. But it wasn't always like that, Debian used eglibc in the years 2009-2015. The situation was mainly due to the organizational structure of glibc and the fact that it was considered insufficiently adapted to embedded systems or ARM. [Here](https://ecos.sourceware.org/ml/libc-alpha/2002-01/msg00079.html) is the correspondence where Linus complains about glibc and call it "bloated". I will briefly present the procedure in the case of C and as soon as possible slide into our beloved Assembly.
+## C specifics
+Unfortunately, in the case of C, the options are quite limited. At some point, we would conclude that it would actually be best to do inline assembly, start the fucktion with _start and compile with falg -nostdlib and -nostartfiles. For such an application we could use a lighter library adapted to embedded systems. Like [uClibc](https://uclibc-ng.org/), written for a very limited Linux without MMU or other libraries typically for microcontrollers, such as [newlib](https://sourceware.org/newlib/) or its descendant [picolibc](https://github.com/picolibc/picolibc). But it still won't get us as close to a minimal elf64 as asm. 
 
-As the number of executed instructions could be relatively deterministic, the size of the elf file will be very dependent on the machine, installed library versions and other factors, so I will not attach much importance to the size itself but to the change.
+Today, glibc is used in most cases, because most Linux distros contains it. But it wasn't always like that, Debian used eglibc in the years 2009-2015. The situation was mainly due to the organizational structure of glibc and the fact that it was considered insufficiently adapted to embedded systems or ARM. [Here](https://ecos.sourceware.org/ml/libc-alpha/2002-01/msg00079.html) is the correspondence where Linus complains about glibc and call it "bloated". I will briefly present the procedure in the case of C and as soon as possible slide into our beloved Assembly.
+
+As the number of executed instructions could be relatively deterministic, the size of the elf file will be very dependent on the machine, installed library versions and other factors. Of course, going lower and lower with values between different machines, at some point the values will start to be the same, as we will get rid of some external dependencies.
 
 At the very beginning I will state that Assembly has two syntaxes AT&T and Intel, they are completely incompatible, the order of operands, register prefixes and number prefixes are different. I will use Intel to be compatible with nasm.
 
-## That's best what we can do in C
+## What steps we can make in C to reduce file size
 The obvious first step is stripping the executable by adding ```-s``` which in our case will remove sections containing symbols .strtab and .symtab which are not needed in execution. After this step ```-flto``` will do nothing same as optimizations. The next possible move is to use ```-Wl,--gc-sections``` which is just garbage collector but for sections during linking process.
 
 ```json
@@ -34,9 +37,9 @@ The obvious first step is stripping the executable by adding ```-s``` which in o
 -rwxr-xr-x 1 dxr dxr 14328 s-o3-flto     
 -rwxr-xr-x 1 dxr dxr 14248 s-o3-flto-gc  // -s -o3 -flto -Wl,--gc-sections
 ```
-
+These are the simplest techniques without interfering too much with the program. From a certain point on, it starts to be more of a fight for bytes than writing a program therefore, if someone is fighting such a fight, it is rather certainly already in Assembly which we will also do below. For the curious, the next steps without inline asm would be to try to link object files with libraries, disable paging, unnecessary sections would be removed for us by a custom linker script,  which would also combine all sections and make one segment.
 ## Assembly
-As you might have probably have seen in previous articles we can use -nostdlib and -nostartfiles and use gcc, but we will skip that and jump straight to assembling with nasm and linking with ld to speed up a little.
+We will jump straight to assembling with nasm and linking with ld to speed up a little. 
 ```json
 section .text
     global _start
@@ -59,6 +62,7 @@ Idx Name          Size      VMA               LMA               File off  Algn
                      /\
   this value decreases but exe file size do not shrink
 ```
+## Memory Alignment in Secions and Segments
 This is because the sections are aligned to 16 bytes == 2**4. This means that it doesn't matter if the value is 2, 12 or 15, this section will have the same size. You may immediately wonder why it is constructed this way and why 2**4 and 2**12, well, read further.
 
 Let's look at ```readelf -lSW a.out``` it will show a little bit more info:
@@ -94,8 +98,8 @@ The second is 9 bytes which is .text (code) section mapped to segment with 2**12
 Segments are mapped with 2**12 tonicity wich is a typical 4096 bytes, which is used for paging virtual memory (RAM). It is ideal to choose a value that fits within the page boundaries. Even if it is a bit too much memory redundancy to achieve maximum speed.
 
 Sections are mapped to segments only for the purpose of loading into memory. Sections and their information are more important to the processor itself, they are made to organize code and data .The .text (code) section will certainly be used very intensively, i.e. it will be placed as close to the CPU as possible, these will be cache memories, which are often paged by 16 bytes, it could be also 4, 8, or 32, but choosing the value 16, smaller alignment will also mean less memory usage and space savings, the cache memory is valuable and its optimal use is very important.
-
-Linker set default alignment to 1000. By calling ```ld -z max-page-size=0x1-s small.o``` we can manipulate this value. But still, the best solution would be to get rid of page alignment altogether. This will provide us with the ```-n / -nmagic``` option calling it combined with strip ```ld -n -s``` we get such executable (reduced for clarity):
+### Modifying and removing alignment
+Linker set default alignment to 1000 for segments. By calling ```ld -z max-page-size=0x1 -s small.o``` we can manipulate this value. But still, the best solution would be to get rid of page alignment altogether. This will provide us with the ```-n / -nmagic``` option calling it combined with strip ```ld -n -s``` we get such executable (reduced for clarity):
 ```json
 Section Headers:
   [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al
@@ -119,6 +123,7 @@ By using these steps, we are able to go down to 352 bytes:
 $ wc noalg-strip
   352 noalg-strip
 ```
+### Custom linker script
 I think this is a good time to mention that we can create our own linker script.
 ```
 ENTRY(_start)
@@ -141,7 +146,7 @@ PHDRS
 }
 ```
 The `.` section is irrelevant to our program, but we need to specify its address so that the linker knows where to put the headers. 
-
+### .shstrtab
 While trying to remove the .shstrtab section with ``objcopy --removesection`` or with ``strip -R`` nothing changed. Likewise, GNU linker (ld) did not respond to discard this section, it just inserted it. LLVM linker (ld.lld), on the other hand, informs us with the following error message: discarding .shstrtab section is not allowed. 
 
 The .shstrtab section is mandatory because the section names are stored as references to this section name table. So as long as there is at least one section in an ELF file, there must be a .shstrtab section.
@@ -151,10 +156,13 @@ This allowed us to go down another 8 bytes:
 $ wc noalg-strip-T-super
   344 noalg-strip-T-super
 ```
-Why do we need sections per se then, let's try to have some fun.
+## Why do we need sections per se then, let's try to have some fun.
 
 [There](https://uclibc.org/docs/elf-64-gen.pdf) is great document which describes elf64 structure. We can specify that ELF header is at offset 0x0 and is 64 bytes and Program Header is 56 bytes with offset specified in one of EHDR fields, but preferrably after EHDR.
+### ELF64 Before
 ![alt text](hexyl-before.png)
+
+### EHDR fields needed for modification
 The fields we will need to modify in EHDR are:
 - e_entry (Entry point address) now (0x0100f0):
   - Specifies where the _start would be we set it to 0x400080 right next to PHDR  
@@ -171,6 +179,7 @@ The fields we will need to modify in EHDR are:
   - Specifies the index of the section header string table that contains section names.
   - Since there are no section headers, we set this value to 0x0 (no string table).
 
+### PHDR fields needed for modification
 The fields we will need to modify in PHDR are:
 - p_offset (Offset in the file) now (0x0):
   - This represents where the segment starts in the file. We will have only one segment with code, we set it to 0x80
@@ -185,7 +194,8 @@ The fields we will need to modify in PHDR are:
   - This should match p_filesz if the segment size in memory is the same as the file size (which is typical for a simple executable).
   - The code size is 10 bytes, we set this to 0xA.
 
-We can delete everything what is after our code. Final result:
+We can delete everything what is after our code. 
+### Final result
 ![alt text](hexyl-after.png)
 I edited the values using ghex, saved the file. The system has no idea that it is an elf64 file and is executable, so we add a flag with the ```chmod +x``` command. And we can check if program works as intended and check the size:
 ```bash
@@ -194,6 +204,7 @@ $ ./noalg-strip-T-super-PH-align ; echo $?
 $ wc noalg-strip-T-super-PH-align
   138 noalg-strip-T-super-PH-align
 ```
+### Removing alignment
 This is already very good, recall that EHDR 64 + PHDR 56 = 110 with code + 10 = 130. Why remaining 8. That's because we still did not get rid of alignment.
 
 We have to change: 
@@ -206,6 +217,7 @@ We have to change:
   
 ![alt text](hexyl-noalign.png)
 
+## Reducing instruction size
 Now we have only EHDR, PHDR and code, it's 130 bytes. It's always the case that if you think something is close to being over, you're probably halfway through something that someone has already figured out. In computer science, this is a common feeling. So too in this case, still this file can be reduced. It's not surprising that we can select the exact instructions that have as few bytes as possible in optcode.
 
 ```json
@@ -222,6 +234,7 @@ Now we have only EHDR, PHDR and code, it's 130 bytes. It's always the case that 
 ```
 Just by changing instructions we are able to cut 3 bytes. Fun fact `xor di, di` and `xor rdi, rdi` are 3 bytes, `xor edi, edi` is the best 2-byte choice. The mov instructions are very expensive, so it makes sense to replace them with a stack. Here it is similarly pop rax is the best choice over other parts of this register.
 ![alt text](hexyl-noalign-instruction.png)
+## Including the code into ELF header
 The ELF64 format does not define where the code and even the Program Header should be. As you can see, of the 16 bytes of the EHDR header, as many as 8 bytes are unused. This is the perfect place to fit our code!
 ![alt text](hexyl-noalign-instruction-embed.png)
 Now we are at 120 bytes and of course while calling `readelf -a` we will see our code:
@@ -232,7 +245,6 @@ $ readelf -lSaW shortest
     Class:                             ELF64
 ```
 but it's not a problem for readelf to define that it's ELF64 file.
-
 
 ## Conclusion 
 Delving into the mechanism of alignment allowed us to see what memory sacrifices are used today to achieve speed. This could not have happened at once; over the years, as technology progressed, the capacity of specific memories increased, and speed sacrifices may have been made.
