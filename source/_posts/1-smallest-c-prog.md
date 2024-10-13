@@ -17,9 +17,9 @@ I was wondering how big the overhead is before and/or after program execution. I
 ```c++
 int main() { return 1; }
 ```
-Theoretically, it is possible to compile a void main in C, which would remove the return value. However, that is not valid according to the ISO standard([C++ §3.6.1/2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf) | [C §5.1.2.2/1](https://www.open-std.org/JTC1/sc22/WG14/www/docs/n2310.pdf)). So we will skip it.
+Theoretically, it is possible to compile a void main in C, which would remove the return value. However, that is not valid according to the ISO standard ([C++ §3.6.1/2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf) | [C §5.1.2.2/1](https://www.open-std.org/JTC1/sc22/WG14/www/docs/n2310.pdf)). So we will skip it.
 
-When we try to disassemble this code, we get assembly with 5 instructions:
+When we try to disassemble this code, we get an assembly with 5 instructions:
 ```as
 push    rbp      // push base pointer on stack to stabilize stack frame
 mov     rbp, rsp // set base pointer on local stack pointer
@@ -36,14 +36,14 @@ Now, guess how many instructions it takes to execute the above program. The answ
 This value is hard to believe, considering that the program itself is just 5 instructions. We will try to find out what and why this happens.
 
 ## Analysis Tools
-Mainly two tools will be used for the analysis ```valgrind --tool=callgrind``` and ```perf```. For visualization, I used Callgrind because of its GUI tool and the greater clarity of results. The most important factor I chose was instruction count because it is machine-independent and deterministic. The runtime environment doesn't have to be exactly the same to perform profiling, which is not true for cycles, and especially for execution time.
+Mainly, two tools will be used for the analysis ```valgrind --tool=callgrind``` and ```perf```. For visualization, I used Callgrind because of its GUI tool and the greater clarity of the results. The most important factor I chose was instruction count because it is machine-independent and deterministic. The runtime environment doesn't have to be exactly the same to perform profiling, which is not true for cycles and especially for execution time.
 
 ## Callgrind Call Map & Call List of dynamically linked program
 ![callgrind call map](callgrind_graph_1.png)
 ![callgrind call list](callgrind_list_1.png)
-As we can see, 98.22% of instructions were made outside of the program, in ld-linux-x86-64.so which is dynamic linux linker <span class="reveal-text" before="DLL" after="dynamic library"></span> We see methods like *_dl_sysdep_start*, *dl_start*, *dl_main*, *dl_relocate_object*, *dl_lookup_symbol_x* These are part of dynamic loading process. Their goal is to load, init, relocate and <span class="reveal-text" before="resolve symbols" after="find function and variables names"></span> used in prog contained for example from libc.so. Later we can see *handle_amd* or *handle_intel* they are involved in initialization and detection of specific processor functions (like SSE extension support, AVX, etc.) Even if your program does not use these functions directly, the system must initialize the CPU to adapt to the appropriate hardware environment. 
+As we can see, 98.22% of instructions were made outside the program. In ld-linux-x86-64.so which is a dynamic Linux linker <span class="reveal-text" before="DLL" after="dynamic library"></span>. We see methods like *_dl_sysdep_start*, *dl_start*, *dl_main*, *dl_relocate_object*, *dl_lookup_symbol_x*. These are part of the dynamic loading process. Their goal is to load, init, relocate and <span class="reveal-text" before="resolve symbols" after="find function and variables names"></span>used in prog contained, for example in libc.so. Later, we can see *handle_amd* or *handle_intel* are involved in the initialization and detection of specific processor functions (like SSE extension support, AVX, etc.). Even if your program does not use these functions directly, the system must initialize the CPU to adapt to the appropriate hardware environment. 
 
-## Running perf stat of static & dynamic approach comparsion
+## Running perf stat of static & dynamic approach comparison
 Let’s run ```perf stat``` to have some unified result to compare it later
 ```java
 0.42    msec task-clock:u              #  0.571 CPUs utilized
@@ -74,7 +74,7 @@ Okay, if most of the program time is taken up by the linker and loading dynamic 
 0.000402128 seconds time elapsed
 ```
 
-We can see that number of instrucions is decreased 4.26 times. However,the binary size increased from <span style="color:green">15776</span> to <span style="color:red">900 224</span> bytes, which is huge difference (<span class="reveal-text" before="x57" after="5706%"></span>). This is because the libraries that were previously dynamically linked from the system are now stored in the binary code of the program.
+We can see that the number of instructions has decreased 4.26 times. However, the binary size increased from <span style="color:green">15776</span> to <span style="color:red">900 224</span> bytes, which is a huge difference (<span class="reveal-text" before="x57" after="5706%"></span>). This is because the libraries that were previously dynamically linked to the system are now stored in the binary code of the program.
 
 ## Callee List of statically linked program
 ![callee list](callgrind_list_2.png)
