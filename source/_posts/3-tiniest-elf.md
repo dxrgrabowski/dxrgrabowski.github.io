@@ -1,5 +1,5 @@
 ---
-title: The Art of Creating Minimal ELF64 Executables in the Modern Era
+title: The Art of Creating Minimal ELF64 Executables by Unconventional Methods
 tags:
   - executable format
   - linker
@@ -10,6 +10,7 @@ tags:
   - elf64
 date: 2024-09-27 11:03:04
 ---
+
 ## Preface
 In the first article, you could see that the simple program:
 ```c
@@ -255,10 +256,12 @@ I had a hard time sensing a line anywhere where I should describe something more
 In this article I used the expressions "process" and "program" quite interchangeably, in this context it did not have a tremendous meaning, but it will gain importance in my next article in which I will discuss how threads are created, what is clone() fork() execve() or pthread_create().
 <details>
 <summary><span style="color:rgb(0, 152, 241)">Sources</span></summary>
-https://uclibc.org/docs/elf-64-gen.pdf
-https://lld.llvm.org/
-https://stackoverflow.com/questions/39960434/linux-elf-file-sections-name
-https://stackoverflow.com/questions/65719528/why-is-shstrtab-section-mandatory
-https://stackoverflow.com/questions/31453859/how-to-remove-a-specific-elf-section-without-stripping-other-symbols
-https://hackmd.io/@brlin/orncb-ld-manual/https%3A%2F%2Fsourceware.org%2Fbinutils%2Fdocs-2.32%2Fld%2FLocation-Counter.html
+
+- https://uclibc.org/docs/elf-64-gen.pdf
+- https://lld.llvm.org/
+- https://stackoverflow.com/questions/39960434/linux-elf-file-sections-name
+- https://stackoverflow.com/questions/65719528/why-is-shstrtab-section-mandatory
+- https://stackoverflow.com/questions/31453859/how-to-remove-a-specific-elf-section-without-stripping-other-symbols
+- https://hackmd.io/@brlin/orncb-ld-manual/https%3A%2F%2Fsourceware.org%2Fbinutils%2Fdocs-2.32%2Fld%2FLocation-Counter.html
+- Andrew S. Tanenbaum - Modern Operating Systems
 </details>
