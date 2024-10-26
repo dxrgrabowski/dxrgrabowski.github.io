@@ -20,7 +20,9 @@ nav:
   category: /categories/
   projects: https://github.com/dxrgrabowski
 
-
+linkedin:
+  linkedin: "www.linkedin.com/comm/mynetwork/discovery-see-all?usecase=PEOPLE_FOLLOWS&followMember=dawidgraabowski"
+  newsletter: "https://www.linkedin.com/newsletters/low-level-tech-articles-7249831254945107969"
 # Links to your social media accounts.
 # The 'icon' keys should correspond to Fontawesome icon names
 # (see https://fontawesome.com/icons?d=gallery&s=brands);
