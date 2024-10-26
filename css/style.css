@@ -1255,6 +1255,32 @@ article .content .caption {
 .blog-post-comments {
   margin-top: 4rem;
 }
+.social-buttons-container {
+  width: 100%;
+  text-align: center;
+  margin: 3em 0 1em 0;
+  font-family: 'Courier New', monospace;
+}
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+}
+.terminal-button {
+  background-color: #1a1a1a;
+  color: #0098f1;
+  border: 1px solid #0098f1;
+  padding: 0.5em 0.5em;
+  font-family: 'Courier New', monospace;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.terminal-button:hover {
+  background-color: #0098f1;
+  color: #1a1a1a;
+  box-shadow: 0 0 10px #0098f1;
+}
 #footer {
   position: absolute;
   bottom: 0;
