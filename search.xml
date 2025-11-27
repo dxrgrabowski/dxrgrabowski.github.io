@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>My CERN Experience</title>
+      <link href="/2025/11/27/2025-11-27-cern-experience/"/>
+      <url>/2025/11/27/2025-11-27-cern-experience/</url>
+      
+        <content type="html"><![CDATA[<!-- TODO: Write about your CERN experience here. -->]]></content>
+      
+      
+      <categories>
+          
+          <category> Lifestyle </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> CERN </tag>
+            
+            <tag> research </tag>
+            
+            <tag> internship </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>The Art of Creating Minimal ELF64 Executables by Unconventional Methods</title>
       <link href="/2024/09/27/3-tiniest-elf/"/>
       <url>/2024/09/27/3-tiniest-elf/</url>
