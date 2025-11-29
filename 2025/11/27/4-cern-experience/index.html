@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="My CERN Project: A Summer of Storage, Science, and ExplorationAs my contract with the 2025 CERN openlab summer programme concludes, I’ve been reflecting on the entire experience. It began with the inc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="My CERN Experience">
+<meta property="og:url" content="http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/index.html">
+<meta property="og:site_name" content="Dawid Grabowski&#39;s Blog">
+<meta property="og:description" content="My CERN Project: A Summer of Storage, Science, and ExplorationAs my contract with the 2025 CERN openlab summer programme concludes, I’ve been reflecting on the entire experience. It began with the inc">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-11-27T10:00:00.000Z">
+<meta property="article:modified_time" content="2025-11-29T15:55:29.911Z">
+<meta property="article:author" content="Dawid Grabowski">
+<meta property="article:tag" content="programming">
+<meta property="article:tag" content="CERN">
+<meta property="article:tag" content="research">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="ceph">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/DXR_cut_rounded.png">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/DXR_cut_rounded.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/DXR_cut_rounded.png">
+        
+      
+    
+    <!-- title -->
+    <title>My CERN Experience</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M1CMTMN59L"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-M1CMTMN59L');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Category</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/dxrgrabowski">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/09/27/3-tiniest-elf/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&text=My CERN Experience"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&title=My CERN Experience"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&is_video=false&description=My CERN Experience"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=My CERN Experience&body=Check out this article: http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&title=My CERN Experience"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&title=My CERN Experience"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&title=My CERN Experience"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&title=My CERN Experience"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&name=My CERN Experience&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&t=My CERN Experience"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#My-CERN-Project-A-Summer-of-Storage-Science-and-Exploration"><span class="toc-number">1.</span> <span class="toc-text">My CERN Project: A Summer of Storage, Science, and Exploration</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Technical-Challenge-Data-Consistency-at-Petabyte-Scale"><span class="toc-number">1.1.</span> <span class="toc-text">The Technical Challenge: Data Consistency at Petabyte-Scale</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#My-Solution-The-Ceph-RGW-Multisite-Consistency-Monitor"><span class="toc-number">1.2.</span> <span class="toc-text">My Solution: The Ceph RGW Multisite Consistency Monitor</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Active-Testing-Mode"><span class="toc-number">1.2.1.</span> <span class="toc-text">1. Active Testing Mode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Passive-Monitoring-Mode-The-main-goal"><span class="toc-number">1.2.2.</span> <span class="toc-text">2. Passive Monitoring Mode (The main goal)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Beyond-the-Code-The-Full-CERN-Experience"><span class="toc-number">1.3.</span> <span class="toc-text">Beyond the Code: The Full CERN Experience</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-OQI-Hackathon-%F0%9F%92%AB"><span class="toc-number">1.3.1.</span> <span class="toc-text">The OQI Hackathon 💫</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Life-and-Travels"><span class="toc-number">1.3.2.</span> <span class="toc-text">Life and Travels</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Key-Achievements-and-Lessons-Learned"><span class="toc-number">1.4.</span> <span class="toc-text">Key Achievements and Lessons Learned</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        My CERN Experience
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Dawid Grabowski</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-11-27T10:00:00.000Z" class="dt-published" itemprop="datePublished">2025-11-27</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Lifestyle/">Lifestyle</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/CERN/" rel="tag">CERN</a>, <a class="p-category" href="/tags/ceph/" rel="tag">ceph</a>, <a class="p-category" href="/tags/programming/" rel="tag">programming</a>, <a class="p-category" href="/tags/python/" rel="tag">python</a>, <a class="p-category" href="/tags/research/" rel="tag">research</a>
+    </div>
+
+
+    </div>
+    <span class="word-count"></span>
+    <span class="reading-time"></span>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h1 id="My-CERN-Project-A-Summer-of-Storage-Science-and-Exploration"><a href="#My-CERN-Project-A-Summer-of-Storage-Science-and-Exploration" class="headerlink" title="My CERN Project: A Summer of Storage, Science, and Exploration"></a>My CERN Project: A Summer of Storage, Science, and Exploration</h1><p>As my contract with the 2025 CERN openlab summer programme concludes, I’ve been reflecting on the entire experience. It began with the incredible news of being selected as one of 38 participants from over 3,800 applicants. It ended with me delivering a functional proof of concept for CERN’s storage infrastructure and a collection of unforgettable memories.</p>
+<p>This article is a summary of both my technical project and the personal journey that came with it.</p>
+<h2 id="The-Technical-Challenge-Data-Consistency-at-Petabyte-Scale"><a href="#The-Technical-Challenge-Data-Consistency-at-Petabyte-Scale" class="headerlink" title="The Technical Challenge: Data Consistency at Petabyte-Scale"></a>The Technical Challenge: Data Consistency at Petabyte-Scale</h2><p>CERN’s experiments, particularly the Large Hadron Collider (LHC), generate petabytes of data that must be stored and preserved for the long term. To do this, CERN relies on <strong>Ceph</strong>, an open-source distributed storage system.</p>
+<p>To ensure high availability and disaster recovery, Ceph’s RADOS Gateway (RGW) is deployed in a <strong>multisite configuration</strong>, replicating data between different data centers (e.g., in Meyrin and Prévessin).</p>
+<p>While this asynchronous replication is great for performance, it introduces a significant risk: <strong>data inconsistency</strong>. Due to network latency, service failures, or software bugs, data can become inconsistent—it might exist at one site but be missing or outdated at another. These errors can be “silent” and incredibly difficult to detect, potentially leading to data loss.</p>
+<h2 id="My-Solution-The-Ceph-RGW-Multisite-Consistency-Monitor"><a href="#My-Solution-The-Ceph-RGW-Multisite-Consistency-Monitor" class="headerlink" title="My Solution: The Ceph RGW Multisite Consistency Monitor"></a>My Solution: The Ceph RGW Multisite Consistency Monitor</h2><p>To address this, I designed, implemented, and documented the <strong>Ceph RGW Multisite Consistency Monitor</strong>. This is a comprehensive tool built to detect, diagnose, and report on these replication discrepancies.</p>
+<p>The tool operates in two distinct modes, providing both passive validation and active testing:</p>
+<h3 id="1-Active-Testing-Mode"><a href="#1-Active-Testing-Mode" class="headerlink" title="1. Active Testing Mode"></a>1. Active Testing Mode</h3><p>This mode is designed to stress-test the replication pipeline and validate its correctness under a controlled load.</p>
+<p><strong>Workflow:</strong></p>
+<ol>
+<li><strong>Generate Load:</strong> The tool performs a configurable number of S3 <code>PUT</code> operations to create new objects in the primary cluster. It can also work in continuous mode</li>
+<li><strong>Wait for Sync:</strong> For each object there is (<code>object_lifetime_seconds</code>) to allow time for the asynchronous replication to complete.</li>
+<li><strong>Clean Up:</strong> It then issues <code>DELETE</code> operations for objects it created.</li>
+<li><strong>Analyze:</strong> The monitor compares the “ground truth” (the set of S3 operations it performed) against the stream of Kafka notifications it received from <em>all</em> sites.</li>
+<li><strong>Report:</strong> It generates a detailed report pinpointing exact inconsistencies, such as “Missing PUT Notifications”, “Extra DELETE Notifications”, or “Orphaned Sync Events”.</li>
+</ol>
+<h3 id="2-Passive-Monitoring-Mode-The-main-goal"><a href="#2-Passive-Monitoring-Mode-The-main-goal" class="headerlink" title="2. Passive Monitoring Mode (The main goal)"></a>2. Passive Monitoring Mode (The main goal)</h3><p>This mode is non-intrusive and designed to monitor a live, production environment without generating its own traffic.</p>
+<p><strong>Workflow:</strong></p>
+<ol>
+<li><strong>Listen:</strong> The tool connects to Ceph’s Kafka-based bucket notification system and continuously consumes the real-time stream of S3 event notifications.</li>
+<li><strong>Detect:</strong> It parses these events to find logical errors as they happen.</li>
+<li><strong>Flag:</strong> It can immediately identify issues like an <code>ObjectSynced:Create</code> event appearing for an object that never had a primary <code>ObjectCreated:Put</code> event.</li>
+<li><strong>Log:</strong> All findings are logged in real-time to an <code>inconsistencies.jsonl</code> file for administrators to review. It can be synchronized with monitoring tools like Graphana or Prometheus</li>
+</ol>
+<hr>
+<h2 id="Beyond-the-Code-The-Full-CERN-Experience"><a href="#Beyond-the-Code-The-Full-CERN-Experience" class="headerlink" title="Beyond the Code: The Full CERN Experience"></a>Beyond the Code: The Full CERN Experience</h2><p>My summer at CERN wasn’t just about the project; it was about the incredible, immersive environment. I had the privilege of meeting and collaborating with brilliant people from all over the world, each working on a different, fascinating piece of the CERN puzzle.</p>
+<p>The environment at CERN is unlike anywhere else. I had the chance to see multiple experiments and control centers up close. This included tours of the <strong>Antimatter Factory</strong>, <strong>LEIR</strong>, <strong>ISOLDE</strong>, massive <strong>ATLAS</strong> experiment and more. Some ISR tunnels expeditions, seeing the complex machinery that scientists use to probe the fundamental structure of the universe. What made these visits truly special was the ability to <em>touch</em> some of the components, grounding the immense scale of the science in something tangible.</p>
+<p>The campus itself is steeped in history. I was able to stand in the very <strong>office where the World Wide Web was born</strong> and visit the <strong>600 MeV Synchrocyclotron (SC)</strong>, one of CERN’s first accelerators.</p>
+<h3 id="The-OQI-Hackathon-💫"><a href="#The-OQI-Hackathon-💫" class="headerlink" title="The OQI Hackathon 💫"></a>The OQI Hackathon 💫</h3><p>My experience wasn’t just limited to my project and tours. From 11-13 July, I joined 34 other students from over 20 countries at CERN IdeaSquare for a hackathon co-organised by OQI and the University of Geneva.</p>
+<p>The challenge? To explore how quantum computing could be used to design new <strong>quantum materials</strong> and contribute to the UN’s Sustainable Development Goals (#SDGs). Quantum materials, like graphene, display unique properties due to quantum mechanics and are used in everything from batteries to touchscreens. It was a fantastic deep-dive into an emerging field, working collaboratively on complex problems. 🌍</p>
+<h3 id="Life-and-Travels"><a href="#Life-and-Travels" class="headerlink" title="Life and Travels"></a>Life and Travels</h3><p>[cite_start]Living in the Geneva area, straddling the border of France and Switzerland[cite: 55], was an experience in itself. I took full advantage of the local culture, enjoying <strong>great French food and wines</strong> and spending a huge amount of time <strong>bike riding</strong> through the beautiful landscapes of the Pays de Gex and around Lake Geneva.</p>
+<p>The location is a perfect gateway for exploring. On the weekends, I was able to:</p>
+<ul>
+<li><p>Hike in the Alps, including an unforgettable trek to <strong>Col du Belvédère (2780m)</strong> near Chamonix, with its stunning views of the Mont Blanc massif.</p>
+</li>
+<li><p>Relax by the lakes, including a beautiful trip to <strong>Lugano</strong> in the Italian-speaking part of Switzerland.</p>
+</li>
+<li><p>Explore historic cities. I managed to visit the beautiful canals of <strong>Annecy</strong>, the gastronomic capital of <strong>Lyon</strong>, and the Swiss cities of <strong>Zurich</strong> and <strong>Bern</strong>.</p>
+</li>
+</ul>
+<hr>
+<h2 id="Key-Achievements-and-Lessons-Learned"><a href="#Key-Achievements-and-Lessons-Learned" class="headerlink" title="Key Achievements and Lessons Learned"></a>Key Achievements and Lessons Learned</h2><p>[cite_start]This project was a success, delivering a robust, flexible, and performant tool that met all its core requirements[cite: 366, 367]. But the development process itself was a powerful learning experience.</p>
+<ul>
+<li>[cite_start]<strong>Monolithic code is a trap:</strong> The initial prototype quickly grew to over 1,000 lines in one file and became unmanageable[cite: 332, 333]. [cite_start]Refactoring it into a modular, component-based architecture (S3Manager, KafkaManager, etc.) was critical for success[cite: 334, 142].</li>
+<li>[cite_start]<strong>Know your tool’s limits:</strong> The pure Python implementation struggled with high-frequency event streams in passive mode[cite: 349, 350]. [cite_start]Migrating the performance-critical, real-time parsing logic to a dedicated <strong>C++ component</strong> was the right solution, creating a fast and resilient hybrid system[cite: 21, 96, 165, 351, 353].</li>
+<li>[cite_start]<strong>Define and defend your scope:</strong> The project’s scope expanded significantly from a simple listener to a full-fledged testing platform[cite: 355, 356, 358]. [cite_start]Learning to manage this “scope creep” by prioritizing “Must-Have” features is essential for delivering on time[cite: 359, 360].</li>
+</ul>
+<p>[cite_start]This summer at CERN has been the most challenging and rewarding period of my career so far[cite: 323]. I’m leaving with a new set of technical skills, a deeper appreciation for large-scale scientific collaboration, and a list of new friends from around the world.</p>
+
+  </div>
+</article>
+<div class="social-buttons-container">
+    
+        <div class="button-wrapper">
+            <button class="terminal-button" onclick="window.open('https://www.linkedin.com/newsletters/low-level-tech-articles-7249831254945107969', '_blank')">
+                [Subscribe to Newsletter]
+            </button>
+            <button class="terminal-button" onclick="window.open('https://www.linkedin.com/comm/mynetwork/discovery-see-all?usecase=PEOPLE_FOLLOWS&amp;followMember=dawidgraabowski', '_blank')">
+                [Connect with me on LinkedIn]
+            </button>
+        </div>
+    
+</div>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/categories/">Category</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/dxrgrabowski">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#My-CERN-Project-A-Summer-of-Storage-Science-and-Exploration"><span class="toc-number">1.</span> <span class="toc-text">My CERN Project: A Summer of Storage, Science, and Exploration</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Technical-Challenge-Data-Consistency-at-Petabyte-Scale"><span class="toc-number">1.1.</span> <span class="toc-text">The Technical Challenge: Data Consistency at Petabyte-Scale</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#My-Solution-The-Ceph-RGW-Multisite-Consistency-Monitor"><span class="toc-number">1.2.</span> <span class="toc-text">My Solution: The Ceph RGW Multisite Consistency Monitor</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Active-Testing-Mode"><span class="toc-number">1.2.1.</span> <span class="toc-text">1. Active Testing Mode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Passive-Monitoring-Mode-The-main-goal"><span class="toc-number">1.2.2.</span> <span class="toc-text">2. Passive Monitoring Mode (The main goal)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Beyond-the-Code-The-Full-CERN-Experience"><span class="toc-number">1.3.</span> <span class="toc-text">Beyond the Code: The Full CERN Experience</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-OQI-Hackathon-%F0%9F%92%AB"><span class="toc-number">1.3.1.</span> <span class="toc-text">The OQI Hackathon 💫</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Life-and-Travels"><span class="toc-number">1.3.2.</span> <span class="toc-text">Life and Travels</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Key-Achievements-and-Lessons-Learned"><span class="toc-number">1.4.</span> <span class="toc-text">Key Achievements and Lessons Learned</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&text=My CERN Experience"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&title=My CERN Experience"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&is_video=false&description=My CERN Experience"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=My CERN Experience&body=Check out this article: http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&title=My CERN Experience"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&title=My CERN Experience"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&title=My CERN Experience"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&title=My CERN Experience"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&name=My CERN Experience&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://dxrgrabowski.github.io/2025/11/27/4-cern-experience/&t=My CERN Experience"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2024-2025
+    Dawid Grabowski
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Category</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/dxrgrabowski">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'dxrgrabowski/dxrgrabowski.github.io';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'Comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>
